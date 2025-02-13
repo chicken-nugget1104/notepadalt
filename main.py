@@ -15,12 +15,12 @@ class NotepadAlternative:
         self.tab_frames = []
         self.current_files = {}
         self.word_wrap = tk.BooleanVar(value=True)
+        self.last_search_term = None
         
         self.create_menu()
         self.new_tab()
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
-        self.last_search_term = None
     
     def create_menu(self):
         menu_bar = tk.Menu(self.root)
@@ -29,7 +29,7 @@ class NotepadAlternative:
         file_menu = tk.Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="New Tab", command=self.new_tab)
         file_menu.add_command(label="Open", command=self.open_file)
-        file_menu.add_command(label="Save", command=self.save_file)
+        file_menu.add_command(label="Save", command=self.save_file, accelerator="Ctrl+S")
         file_menu.add_command(label="Save As", command=self.save_as_file)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.on_exit)
@@ -60,14 +60,15 @@ class NotepadAlternative:
         tools_menu = tk.Menu(menu_bar, tearoff=0)
         tools_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
         #tools_menu.add_command(label="Word Count", command=self.word_count)
-        tools_menu.add_command(label="Check Spelling", command=self.check_spelling, accelerator="Ctrl+S")
+        tools_menu.add_command(label="Check Spelling", command=self.check_spelling, accelerator="Ctrl+P")
         menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
-        self.root.bind_all("<Control-s>", lambda event: self.check_spelling())
+        self.root.bind_all("<Control-p>", lambda event: self.check_spelling())
         self.root.bind_all("<Control-f>", lambda event: self.find_text())
         self.root.bind_all("<Control-g>", lambda event: self.go_to_line())
         self.root.bind_all("<Control-z>", lambda event: self.get_current_text_area().edit_undo())
         self.root.bind_all("<Control-y>", lambda event: self.get_current_text_area().edit_redo())
+        self.root.bind_all("<Control-s>", lambda event: self.save_file())
         #ctrl + c and ctrl + v are buggy so i removed them for the time being.
         #self.root.bind_all("<Control-c>", lambda event: self.root.clipboard_append(self.get_current_text_area().selection_get()))
         #self.root.bind_all("<Control-v>", lambda event: self.get_current_text_area().insert(tk.INSERT, self.root.clipboard_get()))
