@@ -169,8 +169,13 @@ class NotepadAlternative:
 
     def check_spelling(self):
         text_area = self.get_current_text_area()
-        content = text_area.get(1.0, tk.END)
+        content = text_area.get(1.0, tk.END).strip()
         words = content.split()
+        
+        if not words:
+            messagebox.showinfo("Spell Check", "There is no lines of text!")
+            return
+        
         misspelled = [word for word in words if not re.match(r'^[A-Za-z]+$', word)]
         if misspelled:
             messagebox.showinfo("Spell Check", f"Possible misspellings: {', '.join(misspelled)}")
