@@ -4,6 +4,7 @@ from tkinter.scrolledtext import ScrolledText
 import re
 import json
 import requests
+import webbrowser
 import logging
 
 VERSION = "1.1.3-DEV"
