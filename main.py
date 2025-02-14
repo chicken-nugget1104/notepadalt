@@ -61,6 +61,7 @@ class NotepadAlternative:
         tools_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
         #tools_menu.add_command(label="Word Count", command=self.word_count)
         tools_menu.add_command(label="Check Spelling", command=self.check_spelling, accelerator="Ctrl+P")
+        tools_menu.add_command(label="About...", command=self.show_about)
         menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
         self.root.bind_all("<Control-p>", lambda event: self.check_spelling())
@@ -69,9 +70,7 @@ class NotepadAlternative:
         self.root.bind_all("<Control-z>", lambda event: self.undo())
         self.root.bind_all("<Control-y>", lambda event: self.redo())
         self.root.bind_all("<Control-s>", lambda event: self.save_file())
-        #ctrl + c and ctrl + v are buggy so i removed them for the time being.
-        #self.root.bind_all("<Control-c>", lambda event: self.root.clipboard_append(self.get_current_text_area().selection_get()))
-        #self.root.bind_all("<Control-v>", lambda event: self.get_current_text_area().insert(tk.INSERT, self.root.clipboard_get()))
+        #turns out CTRL + C and CTRL + V were built in. didn't realize earlier. sorry.
     
     def new_tab(self):
         frame = tk.Frame(self.tabs)
@@ -177,7 +176,10 @@ class NotepadAlternative:
             messagebox.showinfo("Spell Check", f"Possible misspellings: {', '.join(misspelled)}")
         else:
             messagebox.showinfo("Spell Check", "We found no spelling errors!")
-    
+
+    def show_about(self):
+        messagebox.showinfo("About", "Notepad Alternative v1.0.1\nCreated by silly goober\n2025-2026")
+
     def update_status(self, event=None):
         text_area = self.get_current_text_area()
         content = text_area.get(1.0, tk.END)
