@@ -6,7 +6,7 @@ import json
 import requests
 import logging
 
-VERSION = "1.1.1"
+VERSION = "1.1.2-DEV"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -54,7 +54,7 @@ class NotepadAlternative:
                 return
             
             if VERSION != latest_version:
-                if messagebox.askyesno("Update Available", "Oh no! You're running an outdated version! Wanna update?"):
+                if messagebox.askyesno("Update Available", "Oh! You're running an outdated version! Wanna update?"):
                     webbrowser.open(f"https://github.com/chicken-nugget1104/notepadalt/releases/tag/{latest_version}")
         except Exception as e:
             logging.error(f"Error checking for updates: {e}")
@@ -86,15 +86,10 @@ class NotepadAlternative:
         view_menu = tk.Menu(menu_bar, tearoff=0)
         view_menu.add_command(label="Zoom In", command=self.zoom_in)
         view_menu.add_command(label="Zoom Out", command=self.zoom_out)
-        view_menu.add_command(label="Reset Zoom", command=self.zoom_reset)
-        #view_menu.add_command(label="CCZ (DEBUG ONLY)", command=self.whatisthecurrentzoom)
+        view_menu.add_command(label="Reset Zoom", command=self.zoom_reset, accelerator="Ctrl+R")
+        view_menu.add_command(label="CCZ (DEBUG ONLY)", command=self.whatisthecurrentzoom)
         view_menu.add_checkbutton(label="Word Wrap", variable=self.word_wrap, command=self.toggle_word_wrap)
         menu_bar.add_cascade(label="View", menu=view_menu)
-        
-        #settings_menu = tk.Menu(menu_bar, tearoff=0)
-        #settings_menu.add_command(label="Font Settings", command=self.font_settings)
-        #settings_menu.add_command(label="Toggle Spell Check", command=self.toggle_spell_check)
-        #menu_bar.add_cascade(label="Settings", menu=settings_menu)
 
         settings_menu = tk.Menu(menu_bar, tearoff=0)
         theme_menu = tk.Menu(settings_menu, tearoff=0)
@@ -107,8 +102,7 @@ class NotepadAlternative:
         tools_menu = tk.Menu(menu_bar, tearoff=0)
         tools_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
         tools_menu.add_command(label="Check Spelling", command=self.check_spelling, accelerator="Ctrl+P")
-        #Experimental, not finished, will not ship with next release.
-        #tools_menu.add_command(label="Remove Extra Spaces", command=self.remove_extra_spaces)
+        tools_menu.add_command(label="Remove Extra Spaces", command=self.remove_extra_spaces)
         tools_menu.add_command(label="About...", command=self.show_about)
         menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
@@ -119,6 +113,7 @@ class NotepadAlternative:
         self.root.bind_all("<Control-y>", lambda event: self.redo())
         self.root.bind_all("<Control-s>", lambda event: self.save_file())
         self.root.bind_all("<Control-o>", lambda event: self.open_file())
+        self.root.bind_all("<Control-r>", lambda event: self.zoom_reset())
     
     def new_tab(self):
         frame = tk.Frame(self.tabs)
@@ -174,10 +169,12 @@ class NotepadAlternative:
 
     def remove_extra_spaces(self):
         text_area = self.get_current_text_area()
-        text = text_area.get("1.0", "end")
-        cleaned_text = "\n".join(line.rstrip() for line in text.split("\n"))
-        text_area.delete("1.0", "end")
-        text_area.insert("1.0", cleaned_text)
+        text = text_area.get("1.0", "end-1c")
+        cleaned_text = "\n".join(line.rstrip() for line in text.splitlines())
+        if text != cleaned_text:
+            text_area.delete("1.0", "end")
+            text_area.insert("1.0", cleaned_text)
+
 
     def find_text(self):
         self.last_search_term = simpledialog.askstring("Find", "Enter text to search:")
