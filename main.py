@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
 from tkinter.scrolledtext import ScrolledText
 import re
+import json
 
 class NotepadAlternative:
     def __init__(self, root):
@@ -17,7 +18,20 @@ class NotepadAlternative:
         self.word_wrap = tk.BooleanVar(value=True)
         self.last_search_term = None
         
+        # Theme shenanagins (took so long to make...)
+        self.loaded_theme = "Light"
+        #self.load_theme_config()
+        self.current_theme = tk.StringVar(value=self.loaded_theme)
+        self.themes = {
+            "Light": {"bg": "white", "fg": "black", "insert": "black", "select": "lightblue"},
+            "Dark": {"bg": "#2E2E2E", "fg": "white", "insert": "white", "select": "#555555"},
+            "Solarized": {"bg": "#002B36", "fg": "#839496", "insert": "#839496", "select": "#073642"},
+            "Cooler Dark": {"bg": "#282c34", "fg": "#abb2bf", "insert": "#abb2bf", "select": "#3e4451"},
+            "Command Prompt": {"bg": "#0F0F0F", "fg": "#39FF14", "insert": "#39FF14", "select": "#FF00FF"}
+        }
+        
         self.create_menu()
+        self.apply_theme()
         self.new_tab()
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -58,6 +72,14 @@ class NotepadAlternative:
         #settings_menu.add_command(label="Font Settings", command=self.font_settings)
         #settings_menu.add_command(label="Toggle Spell Check", command=self.toggle_spell_check)
         #menu_bar.add_cascade(label="Settings", menu=settings_menu)
+
+        settings_menu = tk.Menu(menu_bar, tearoff=0)
+        theme_menu = tk.Menu(settings_menu, tearoff=0)
+        for theme in self.themes.keys():
+            theme_menu.add_radiobutton(label=theme, variable=self.current_theme, command=self.apply_theme)
+        
+        settings_menu.add_cascade(label="Themes", menu=theme_menu)
+        menu_bar.add_cascade(label="Settings", menu=settings_menu)
         
         tools_menu = tk.Menu(menu_bar, tearoff=0)
         tools_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
@@ -73,6 +95,7 @@ class NotepadAlternative:
         self.root.bind_all("<Control-z>", lambda event: self.undo())
         self.root.bind_all("<Control-y>", lambda event: self.redo())
         self.root.bind_all("<Control-s>", lambda event: self.save_file())
+        self.root.bind_all("<Control-m>", lambda event: self.save_theme_config())
     
     def new_tab(self):
         frame = tk.Frame(self.tabs)
@@ -193,13 +216,41 @@ class NotepadAlternative:
             messagebox.showinfo("Spell Check", "We found no spelling errors!")
 
     def show_about(self):
-        messagebox.showinfo("About", "Notepad Alternative v1.0.1\nCreated by silly goober\n2025-2026")
+        messagebox.showinfo("About", "Notepad Alternative v1.1.0\nCreated by silly goober\n2025-2026")
 
     def update_status(self, event=None):
         text_area = self.get_current_text_area()
         content = text_area.get(1.0, tk.END)
         words = len(content.split())
         self.root.title(f"Notepad Alternative - Word Count: {words}")
+
+    def load_theme_config(self):
+        try:
+            with open("config.json", "r") as config_file:
+                config_data = json.load(config_file)
+                self.loaded_theme = config_data.get("theme", "Light")
+                #self.current_theme = self.loaded_theme
+                self.apply_theme()
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.loaded_theme = "Light"
+
+    def save_theme_config(self):
+        try:
+            theme_value = self.current_theme.get()
+            with open("config.json", "w") as config_file:
+                json.dump({"theme": theme_value}, config_file, indent=4)
+        except Exception as e:
+            print(f"Error saving theme config: {e}")
+
+    def apply_theme(self):
+        theme_name = self.current_theme.get()
+        if theme_name in self.themes:
+            theme = self.themes[theme_name]
+        else:
+            theme = self.themes["Light"]
+        for text_area in self.tab_frames:
+            text_area.config(bg=theme["bg"], fg=theme["fg"], insertbackground=theme["insert"], selectbackground=theme["select"])
+        self.root.config(bg=theme["bg"])
 
     def go_to_line(self):
         line_number_str = simpledialog.askstring("Go to Line", "Enter the line number:")
@@ -244,6 +295,7 @@ class NotepadAlternative:
             if text_area.edit_modified():
                 if messagebox.askyesno("Save Changes", "You have some unsaved changes. Save before exiting?"):
                     self.save_file()
+        self.save_theme_config()
         self.root.destroy()
 
 if __name__ == "__main__":
