@@ -7,7 +7,7 @@ import requests
 import webbrowser
 import logging
 
-VERSION = "1.2.0-DEV"
+VERSION = "1.1.3"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 
