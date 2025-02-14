@@ -6,8 +6,9 @@ import json
 import requests
 import webbrowser
 import logging
+import os
 
-VERSION = "1.1.3"
+VERSION = "1.2.0-DEV"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -141,6 +142,8 @@ class NotepadAlternative:
         self.tabs.add(frame, text=tab_name)
         self.tab_frames.append(text_area)
         self.current_files[text_area] = None
+
+        self.setup_syntax_highlighting(text_area)
     
     def get_current_text_area(self):
         current_index = self.tabs.index(self.tabs.select())
@@ -155,8 +158,9 @@ class NotepadAlternative:
             text_area.config(wrap="word" if self.word_wrap.get() else "none")
         self.save_config()
     
+    #FILE HELPERS
     def open_file(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("All Files", "*.*")])
+        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("Haxe Files", "*.hx"), ("All Files", "*.*")])
         if file_path:
             with open(file_path, "r", encoding="utf-8") as file:
                 text_area = self.get_current_text_area()
@@ -165,6 +169,7 @@ class NotepadAlternative:
             self.current_files[text_area] = file_path
             self.update_tab_title(text_area, file_path)
             self.update_status()
+            self.setup_syntax_highlighting(text_area)
     
     def save_file(self):
         text_area = self.get_current_text_area()
@@ -178,12 +183,47 @@ class NotepadAlternative:
     
     def save_as_file(self):
         text_area = self.get_current_text_area()
-        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"),  ("Javascript Files", "*.js"), ("All Files", "*.*")])
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"),  ("Javascript Files", "*.js"), ("Haxe Files", "*.hx"), ("All Files", "*.*")])
         if file_path:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(text_area.get(1.0, tk.END))
             self.current_files[text_area] = file_path
             self.update_tab_title(text_area, file_path)
+
+    def get_file_extension(self, text_area):
+        text_area = self.get_current_text_area()
+        current_file = self.current_files.get(text_area)
+        if current_file:
+            return os.path.splitext(current_file)[1]
+        return ""
+
+    def setup_syntax_highlighting(self, text_area):
+        file_extension = self.get_file_extension(text_area)
+        
+        if file_extension in [".haxe"]:
+            text_area.tag_configure("keyword", foreground="blue")
+            text_area.tag_configure("comment", foreground="green")
+            text_area.tag_configure("string", foreground="red")
+            self.add_haxe_highlighting(text_area)
+
+    def highlight_pattern(self, text_area, pattern, tag_name):
+        start = "1.0"
+        while True:
+            start = text_area.search(pattern, start, stopindex=tk.END, regexp=True)
+            if not start:
+                break
+            end = f"{start}+{len(text_area.get(start, start + '1c'))}c"
+            text_area.tag_add(tag_name, start, end)
+            start = end
+
+    def add_haxe_highlighting(self, text_area):
+        haxe_keywords = r'\b(?:class|function|var|new|this|if|else|return)\b'
+        haxe_comments = r'//.*|/\*[\s\S]*?\*/'
+        haxe_strings = r'"[^"]*"'
+        
+        self.highlight_pattern(text_area, haxe_keywords, "keyword")
+        self.highlight_pattern(text_area, haxe_comments, "comment")
+        self.highlight_pattern(text_area, haxe_strings, "string")
     
     def undo(self):
         self.get_current_text_area().edit_undo()
