@@ -99,6 +99,7 @@ class NotepadAlternative:
                 text_area.delete(1.0, tk.END)
                 text_area.insert(tk.END, file.read())
             self.current_files[text_area] = file_path
+            self.update_status()
     
     def save_file(self):
         text_area = self.get_current_text_area()
