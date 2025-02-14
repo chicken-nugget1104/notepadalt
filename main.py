@@ -66,8 +66,8 @@ class NotepadAlternative:
         self.root.bind_all("<Control-p>", lambda event: self.check_spelling())
         self.root.bind_all("<Control-f>", lambda event: self.find_text())
         self.root.bind_all("<Control-g>", lambda event: self.go_to_line())
-        self.root.bind_all("<Control-z>", lambda event: self.get_current_text_area().edit_undo())
-        self.root.bind_all("<Control-y>", lambda event: self.get_current_text_area().edit_redo())
+        self.root.bind_all("<Control-z>", lambda event: self.undo())
+        self.root.bind_all("<Control-y>", lambda event: self.redo())
         self.root.bind_all("<Control-s>", lambda event: self.save_file())
         #ctrl + c and ctrl + v are buggy so i removed them for the time being.
         #self.root.bind_all("<Control-c>", lambda event: self.root.clipboard_append(self.get_current_text_area().selection_get()))
@@ -176,7 +176,7 @@ class NotepadAlternative:
         if misspelled:
             messagebox.showinfo("Spell Check", f"Possible misspellings: {', '.join(misspelled)}")
         else:
-            messagebox.showinfo("Spell Check", "No spelling errors detected.")
+            messagebox.showinfo("Spell Check", "We found no spelling errors!")
     
     def update_status(self, event=None):
         text_area = self.get_current_text_area()
@@ -209,11 +209,13 @@ class NotepadAlternative:
         text_area = self.get_current_text_area()
         current_size = int(text_area.cget("font").split()[1])
         text_area.config(font=("Arial", max(8, current_size - 2)))
+
+    #reset_zoom WAS here, but now it is not, because im lazy.
     
     def on_exit(self):
         for text_area in self.tab_frames:
             if text_area.edit_modified():
-                if messagebox.askyesno("Save Changes", "You have unsaved changes. Save before exiting?"):
+                if messagebox.askyesno("Save Changes", "You have some unsaved changes. Save before exiting?"):
                     self.save_file()
         self.root.destroy()
 
