@@ -7,7 +7,7 @@ import requests
 import webbrowser
 import logging
 
-VERSION = "1.1.3-DEV"
+VERSION = "1.2.0-DEV"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -80,8 +80,11 @@ class NotepadAlternative:
         
         edit_menu = tk.Menu(menu_bar, tearoff=0)
         edit_menu.add_command(label="Find", command=self.find_text, accelerator="Ctrl+F")
-        edit_menu.add_command(label="Find Next", command=self.find_next)
+        edit_menu.add_command(label="Find Next", command=self.find_next, accelerator="F3")
+        #DOESNT WORK
+        #edit_menu.add_command(label="Find Previous", command=self.find_previous)
         edit_menu.add_command(label="Replace", command=self.replace_text)
+        edit_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
         edit_menu.add_separator()
         edit_menu.add_command(label="Undo", command=self.undo, accelerator="Ctrl+Z")
         edit_menu.add_command(label="Redo", command=self.redo, accelerator="Ctrl+Y")
@@ -90,8 +93,8 @@ class NotepadAlternative:
         #EVERYTHING STARTING WITH # NEEDS TO BE ADDED LATER! PROBABLY IN V2! UNLESS SOME CONTRIBUTER ADDS THEM FOR ME! lol
         
         view_menu = tk.Menu(menu_bar, tearoff=0)
-        view_menu.add_command(label="Zoom In", command=self.zoom_in)
-        view_menu.add_command(label="Zoom Out", command=self.zoom_out)
+        view_menu.add_command(label="Zoom In", command=self.zoom_in, accelerator="Ctrl+")
+        view_menu.add_command(label="Zoom Out", command=self.zoom_out, accelerator="Ctrl+-")
         view_menu.add_command(label="Reset Zoom", command=self.zoom_reset, accelerator="Ctrl+R")
         #view_menu.add_command(label="CCZ (DEBUG ONLY)", command=self.whatisthecurrentzoom)
         view_menu.add_checkbutton(label="Word Wrap", variable=self.word_wrap, command=self.toggle_word_wrap)
@@ -106,7 +109,6 @@ class NotepadAlternative:
         menu_bar.add_cascade(label="Settings", menu=settings_menu)
         
         tools_menu = tk.Menu(menu_bar, tearoff=0)
-        tools_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
         tools_menu.add_command(label="Check Spelling", command=self.check_spelling, accelerator="Ctrl+P")
         tools_menu.add_command(label="Remove Extra Spaces", command=self.remove_extra_spaces)
         tools_menu.add_command(label="About...", command=self.show_about)
@@ -114,12 +116,17 @@ class NotepadAlternative:
 
         self.root.bind_all("<Control-p>", lambda event: self.check_spelling())
         self.root.bind_all("<Control-f>", lambda event: self.find_text())
+        self.root.bind_all("<F3>", lambda event: self.find_next())
         self.root.bind_all("<Control-g>", lambda event: self.go_to_line())
         self.root.bind_all("<Control-z>", lambda event: self.undo())
         self.root.bind_all("<Control-y>", lambda event: self.redo())
         self.root.bind_all("<Control-s>", lambda event: self.save_file())
         self.root.bind_all("<Control-o>", lambda event: self.open_file())
+        self.root.bind_all("<Control-plus>", lambda event: self.zoom_in())
+        self.root.bind_all("<Control-equal>", lambda event: self.zoom_in())
+        self.root.bind_all("<Control-minus>", lambda event: self.zoom_out())
         self.root.bind_all("<Control-r>", lambda event: self.zoom_reset())
+        self.root.bind_all("<Control-MouseWheel>", lambda event: self.zoom_in() if event.delta > 0 else self.zoom_out())
     
     def new_tab(self):
         frame = tk.Frame(self.tabs)
@@ -219,6 +226,23 @@ class NotepadAlternative:
                 messagebox.showinfo("Find", f"'{self.last_search_term}' not found.")
         else:
             messagebox.showinfo("Find", "Please perform a search first.")
+
+    def find_previous(self):
+        if self.last_search_term:
+            text_area = self.get_current_text_area()
+            content = text_area.get(1.0, tk.END)
+            current_index = text_area.index(tk.INSERT)
+            last_index = content.rfind(self.last_search_term, 0, content.find(self.last_search_term, content.index(current_index)))
+
+            if last_index != -1:
+                text_area.tag_remove("highlight", "1.0", tk.END)
+                text_area.tag_add("highlight", "1.0 + {}c".format(last_index), "1.0 + {}c".format(last_index + len(self.last_search_term)))
+                text_area.tag_config("highlight", background="yellow")
+            else:
+                messagebox.showinfo("Find", "No previous occurrences found.")
+        else:
+            messagebox.showinfo("Find", "Please perform a search first.")
+
 
     def replace_text(self):
         if self.last_search_term is None:
