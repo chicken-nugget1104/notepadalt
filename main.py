@@ -122,13 +122,18 @@ class NotepadAlternative:
         
         text_area.bind("<KeyRelease>", self.update_status)
         
-        self.tabs.add(frame, text=f"Untitled {len(self.tab_frames) + 1}")
+        tab_name = f"Untitled {len(self.tab_frames) + 1}"
+        self.tabs.add(frame, text=tab_name)
         self.tab_frames.append(text_area)
         self.current_files[text_area] = None
     
     def get_current_text_area(self):
         current_index = self.tabs.index(self.tabs.select())
         return self.tab_frames[current_index]
+
+    def update_tab_title(self, text_area, file_path):
+        tab_name = file_path.split("/")[-1]
+        self.tabs.tab(self.tab_frames.index(text_area), text=tab_name)
 
     def toggle_word_wrap(self):
         for text_area in self.tab_frames:
@@ -143,6 +148,7 @@ class NotepadAlternative:
                 text_area.delete(1.0, tk.END)
                 text_area.insert(tk.END, file.read())
             self.current_files[text_area] = file_path
+            self.update_tab_title(text_area, file_path)
             self.update_status()
     
     def save_file(self):
@@ -151,6 +157,7 @@ class NotepadAlternative:
         if file_path:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(text_area.get(1.0, tk.END))
+                self.update_tab_title(text_area, file_path)
         else:
             self.save_as_file()
     
@@ -161,6 +168,7 @@ class NotepadAlternative:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(text_area.get(1.0, tk.END))
             self.current_files[text_area] = file_path
+            self.update_tab_title(text_area, file_path)
     
     def undo(self):
         self.get_current_text_area().edit_undo()
@@ -175,7 +183,6 @@ class NotepadAlternative:
         if text != cleaned_text:
             text_area.delete("1.0", "end")
             text_area.insert("1.0", cleaned_text)
-
 
     def find_text(self):
         self.last_search_term = simpledialog.askstring("Find", "Enter text to search:")
