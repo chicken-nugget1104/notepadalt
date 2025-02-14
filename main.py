@@ -3,6 +3,12 @@ from tkinter import filedialog, messagebox, simpledialog, ttk
 from tkinter.scrolledtext import ScrolledText
 import re
 import json
+import requests
+import logging
+
+VERSION = "1.1.1"
+
+logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 
 class NotepadAlternative:
     def __init__(self, root):
@@ -17,6 +23,8 @@ class NotepadAlternative:
         self.current_files = {}
         self.word_wrap = tk.BooleanVar(value=True)
         self.last_search_term = None
+
+        self.check_for_updates()
         
         # Theme shenanagins (took so long to make...)
         self.loaded_theme = "Light"
@@ -35,6 +43,20 @@ class NotepadAlternative:
         self.new_tab()
         
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
+
+    def check_for_updates(self):
+        try:
+            response = requests.get("https://raw.githubusercontent.com/chicken-nugget1104/notepadalt/refs/heads/main/versionnumber.txt")
+            latest_version = response.text.strip()
+            
+            if VERSION.endswith("-DEV"):
+                return
+            
+            if VERSION != latest_version:
+                if messagebox.askyesno("Update Available", "Oh no! You're running an outdated version! Wanna update?"):
+                    webbrowser.open(f"https://github.com/chicken-nugget1104/notepadalt/releases/tag/{latest_version}")
+        except Exception as e:
+            logging.error(f"Error checking for updates: {e}")
     
     def create_menu(self):
         menu_bar = tk.Menu(self.root)
@@ -216,7 +238,7 @@ class NotepadAlternative:
             messagebox.showinfo("Spell Check", "We found no spelling errors!")
 
     def show_about(self):
-        messagebox.showinfo("About", "Notepad Alternative v1.1.0\nCreated by silly goober\n2025-2026")
+        messagebox.showinfo("About", f"Notepad Alternative v{VERSION}\nCreated by silly goober\n2025-2026")
 
     def update_status(self, event=None):
         text_area = self.get_current_text_area()
@@ -302,3 +324,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = NotepadAlternative(root)
     root.mainloop()
+
