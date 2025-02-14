@@ -6,7 +6,7 @@ import json
 import requests
 import logging
 
-VERSION = "1.1.2"
+VERSION = "1.1.3-DEV"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -35,7 +35,10 @@ class NotepadAlternative:
             "Dark": {"bg": "#2E2E2E", "fg": "white", "insert": "white", "select": "#555555"},
             "Solarized": {"bg": "#002B36", "fg": "#839496", "insert": "#839496", "select": "#073642"},
             "Cooler Dark": {"bg": "#282c34", "fg": "#abb2bf", "insert": "#abb2bf", "select": "#3e4451"},
-            "Command Prompt": {"bg": "#0F0F0F", "fg": "#39FF14", "insert": "#39FF14", "select": "#FF00FF"}
+            "Command Prompt": {"bg": "#0F0F0F", "fg": "#39FF14", "insert": "#39FF14", "select": "#FF00FF"},
+            "Gruvbox Dark": {"bg": "#282828", "fg": "#ebdbb2", "insert": "#ebdbb2", "select": "#504945"},
+            "Gruvbox Light": {"bg": "#fbf1c7", "fg": "#3c3836", "insert": "#3c3836", "select": "#d5c4a1"},
+            "Midnight": {"bg": "#121212", "fg": "#C0C0C0", "insert": "#C0C0C0", "select": "#333333"}
         }
         self.style = ttk.Style()
 
@@ -235,7 +238,7 @@ class NotepadAlternative:
         words = content.split()
         
         if not words:
-            messagebox.showinfo("Spell Check", "There is no lines of text!")
+            messagebox.showinfo("Spell Check", "There is no lines of text! Please write at least 1 word!")
             return
         
         misspelled = [word for word in words if not re.match(r'^[A-Za-z]+$', word)]
