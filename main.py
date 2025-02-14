@@ -62,6 +62,8 @@ class NotepadAlternative:
         tools_menu = tk.Menu(menu_bar, tearoff=0)
         tools_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
         tools_menu.add_command(label="Check Spelling", command=self.check_spelling, accelerator="Ctrl+P")
+        #Experimental, not finished, will not ship with next release.
+        #tools_menu.add_command(label="Remove Extra Spaces", command=self.remove_extra_spaces)
         tools_menu.add_command(label="About...", command=self.show_about)
         menu_bar.add_cascade(label="Tools", menu=tools_menu)
 
@@ -123,6 +125,13 @@ class NotepadAlternative:
     
     def redo(self):
         self.get_current_text_area().edit_redo()
+
+    def remove_extra_spaces(self):
+        text_area = self.get_current_text_area()
+        text = text_area.get("1.0", "end")
+        cleaned_text = "\n".join(line.rstrip() for line in text.split("\n"))
+        text_area.delete("1.0", "end")
+        text_area.insert("1.0", cleaned_text)
 
     def find_text(self):
         self.last_search_term = simpledialog.askstring("Find", "Enter text to search:")
