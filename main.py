@@ -29,7 +29,6 @@ class NotepadAlternative:
         
         # Theme shenanagins (took so long to make...)
         self.loaded_theme = "Light"
-        #self.load_theme_config()
         self.current_theme = tk.StringVar(value=self.loaded_theme)
         self.themes = {
             "Light": {"bg": "white", "fg": "black", "insert": "black", "select": "lightblue"},
@@ -40,6 +39,7 @@ class NotepadAlternative:
         }
         
         self.create_menu()
+        self.load_config()
         self.apply_theme()
         self.new_tab()
         
@@ -133,6 +133,7 @@ class NotepadAlternative:
     def toggle_word_wrap(self):
         for text_area in self.tab_frames:
             text_area.config(wrap="word" if self.word_wrap.get() else "none")
+        self.save_config()
     
     def open_file(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("All Files", "*.*")])
@@ -244,23 +245,21 @@ class NotepadAlternative:
         words = len(content.split())
         self.root.title(f"Notepad Alternative - Word Count: {words}")
 
-    def load_theme_config(self):
+    def load_config(self):
         try:
             with open("config.json", "r") as config_file:
                 config_data = json.load(config_file)
-                self.loaded_theme = config_data.get("theme", "Light")
-                #self.current_theme = self.loaded_theme
-                self.apply_theme()
+                self.word_wrap.set(config_data.get("word_wrap", True))
         except (FileNotFoundError, json.JSONDecodeError):
-            self.loaded_theme = "Light"
+            self.word_wrap.set(True)
 
-    def save_theme_config(self):
+    def save_config(self):
         try:
-            theme_value = self.current_theme.get()
+            word_wrap_value = self.word_wrap.get()
             with open("config.json", "w") as config_file:
-                json.dump({"theme": theme_value}, config_file, indent=4)
+                json.dump({"word_wrap": word_wrap_value}, config_file, indent=4)
         except Exception as e:
-            print(f"Error saving theme config: {e}")
+            logging.error(f"Error saving theme config: {e}")
 
     def apply_theme(self):
         theme_name = self.current_theme.get()
@@ -315,7 +314,7 @@ class NotepadAlternative:
             if text_area.edit_modified():
                 if messagebox.askyesno("Save Changes", "You have some unsaved changes. Save before exiting?"):
                     self.save_file()
-        self.save_theme_config()
+        self.save_config()
         self.root.destroy()
 
 if __name__ == "__main__":
