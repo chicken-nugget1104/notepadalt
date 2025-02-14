@@ -88,7 +88,7 @@ class NotepadAlternative:
         view_menu.add_command(label="Zoom In", command=self.zoom_in)
         view_menu.add_command(label="Zoom Out", command=self.zoom_out)
         view_menu.add_command(label="Reset Zoom", command=self.zoom_reset, accelerator="Ctrl+R")
-        view_menu.add_command(label="CCZ (DEBUG ONLY)", command=self.whatisthecurrentzoom)
+        #view_menu.add_command(label="CCZ (DEBUG ONLY)", command=self.whatisthecurrentzoom)
         view_menu.add_checkbutton(label="Word Wrap", variable=self.word_wrap, command=self.toggle_word_wrap)
         menu_bar.add_cascade(label="View", menu=view_menu)
 
