@@ -49,6 +49,8 @@ class NotepadAlternative:
         view_menu = tk.Menu(menu_bar, tearoff=0)
         view_menu.add_command(label="Zoom In", command=self.zoom_in)
         view_menu.add_command(label="Zoom Out", command=self.zoom_out)
+        view_menu.add_command(label="Reset Zoom", command=self.zoom_reset)
+        #view_menu.add_command(label="CCZ (DEBUG ONLY)", command=self.whatisthecurrentzoom)
         view_menu.add_checkbutton(label="Word Wrap", variable=self.word_wrap, command=self.toggle_word_wrap)
         menu_bar.add_cascade(label="View", menu=view_menu)
         
@@ -210,14 +212,24 @@ class NotepadAlternative:
     def zoom_in(self):
         text_area = self.get_current_text_area()
         current_size = int(text_area.cget("font").split()[1])
-        text_area.config(font=("Arial", current_size + 2))
+        if current_size != 30:
+            text_area.config(font=("Arial", current_size + 2))
     
     def zoom_out(self):
         text_area = self.get_current_text_area()
         current_size = int(text_area.cget("font").split()[1])
-        text_area.config(font=("Arial", max(8, current_size - 2)))
+        if current_size != 6:
+            text_area.config(font=("Arial", max(8, current_size - 2)))
 
-    #reset_zoom WAS here, but now it is not, because im lazy.
+    def whatisthecurrentzoom(self):
+        text_area = self.get_current_text_area()
+        current_size = int(text_area.cget("font").split()[1])
+        messagebox.showinfo("Zoom", current_size)
+
+    def zoom_reset(self):
+        text_area = self.get_current_text_area()
+        current_size = int(text_area.cget("font").split()[1])
+        text_area.config(font=("Arial", 12))
     
     def on_exit(self):
         for text_area in self.tab_frames:
