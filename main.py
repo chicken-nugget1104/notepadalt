@@ -64,7 +64,7 @@ class NotepadAlternative:
         
         file_menu = tk.Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="New Tab", command=self.new_tab)
-        file_menu.add_command(label="Open", command=self.open_file)
+        file_menu.add_command(label="Open", command=self.open_file, accelerator="Ctrl+O")
         file_menu.add_command(label="Save", command=self.save_file, accelerator="Ctrl+S")
         file_menu.add_command(label="Save As", command=self.save_as_file)
         file_menu.add_separator()
@@ -117,7 +117,7 @@ class NotepadAlternative:
         self.root.bind_all("<Control-z>", lambda event: self.undo())
         self.root.bind_all("<Control-y>", lambda event: self.redo())
         self.root.bind_all("<Control-s>", lambda event: self.save_file())
-        self.root.bind_all("<Control-m>", lambda event: self.save_theme_config())
+        self.root.bind_all("<Control-o>", lambda event: self.open_file())
     
     def new_tab(self):
         frame = tk.Frame(self.tabs)
