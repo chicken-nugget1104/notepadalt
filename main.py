@@ -6,7 +6,7 @@ import json
 import requests
 import logging
 
-VERSION = "1.1.2-DEV"
+VERSION = "1.1.2"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 
