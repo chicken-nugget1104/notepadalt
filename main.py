@@ -37,7 +37,8 @@ class NotepadAlternative:
             "Cooler Dark": {"bg": "#282c34", "fg": "#abb2bf", "insert": "#abb2bf", "select": "#3e4451"},
             "Command Prompt": {"bg": "#0F0F0F", "fg": "#39FF14", "insert": "#39FF14", "select": "#FF00FF"}
         }
-        
+        self.style = ttk.Style()
+
         self.create_menu()
         self.load_config()
         self.apply_theme()
@@ -277,6 +278,8 @@ class NotepadAlternative:
         for text_area in self.tab_frames:
             text_area.config(bg=theme["bg"], fg=theme["fg"], insertbackground=theme["insert"], selectbackground=theme["select"])
         self.root.config(bg=theme["bg"])
+        self.style.configure("TNotebook.Tab", background=theme["bg"])
+        self.style.configure("TNotebook", background=theme["bg"])
 
     def go_to_line(self):
         line_number_str = simpledialog.askstring("Go to Line", "Enter the line number:")
