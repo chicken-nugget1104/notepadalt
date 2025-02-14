@@ -92,7 +92,7 @@ class NotepadAlternative:
             text_area.config(wrap="word" if self.word_wrap.get() else "none")
     
     def open_file(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("All Files", "*.*")])
         if file_path:
             with open(file_path, "r", encoding="utf-8") as file:
                 text_area = self.get_current_text_area()
@@ -111,7 +111,7 @@ class NotepadAlternative:
     
     def save_as_file(self):
         text_area = self.get_current_text_area()
-        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"),  ("Javascript Files", "*.js"), ("All Files", "*.*")])
         if file_path:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(text_area.get(1.0, tk.END))
