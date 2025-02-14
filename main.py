@@ -61,7 +61,6 @@ class NotepadAlternative:
         
         tools_menu = tk.Menu(menu_bar, tearoff=0)
         tools_menu.add_command(label="Go To Line", command=self.go_to_line, accelerator="Ctrl+G")
-        #tools_menu.add_command(label="Word Count", command=self.word_count)
         tools_menu.add_command(label="Check Spelling", command=self.check_spelling, accelerator="Ctrl+P")
         tools_menu.add_command(label="About...", command=self.show_about)
         menu_bar.add_cascade(label="Tools", menu=tools_menu)
@@ -72,7 +71,6 @@ class NotepadAlternative:
         self.root.bind_all("<Control-z>", lambda event: self.undo())
         self.root.bind_all("<Control-y>", lambda event: self.redo())
         self.root.bind_all("<Control-s>", lambda event: self.save_file())
-        #turns out CTRL + C and CTRL + V were built in. didn't realize earlier. sorry.
     
     def new_tab(self):
         frame = tk.Frame(self.tabs)
