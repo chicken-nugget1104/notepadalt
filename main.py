@@ -24,6 +24,7 @@ class NotepadAlternative:
         self.word_wrap = tk.BooleanVar(value=True)
         self.last_search_term = None
 
+	# Update Checker
         self.check_for_updates()
         
         # Theme shenanagins (took so long to make...)
