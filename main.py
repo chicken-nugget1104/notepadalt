@@ -23,7 +23,6 @@ class NotepadAlternative:
         
         self.tab_frames = []
         self.current_files = {}
-        self.word_wrap = tk.BooleanVar(value=True)
         self.last_search_term = None
 
 	# Update Checker
@@ -44,6 +43,11 @@ class NotepadAlternative:
             "Midnight": {"bg": "#121212", "fg": "#C0C0C0", "insert": "#C0C0C0", "select": "#333333"}
         }
         self.style = ttk.Style()
+
+        # SETTINGS
+        self.word_wrap = tk.BooleanVar(value=True)
+        self.show_line_numbers = tk.BooleanVar(value=False)
+        self.line_numbers = None
 
         self.create_menu()
         self.load_config()
@@ -109,6 +113,7 @@ class NotepadAlternative:
             theme_menu.add_radiobutton(label=theme, variable=self.current_theme, command=self.apply_theme)
         
         settings_menu.add_cascade(label="Themes", menu=theme_menu)
+        #settings_menu.add_checkbutton(label="Show Line Numbers", onvalue=True, offvalue=False, variable=self.show_line_numbers, command=self.toggle_line_numbers)
         menu_bar.add_cascade(label="Settings", menu=settings_menu)
         
         tools_menu = tk.Menu(menu_bar, tearoff=0)
@@ -157,6 +162,31 @@ class NotepadAlternative:
         for text_area in self.tab_frames:
             text_area.config(wrap="word" if self.word_wrap.get() else "none")
         self.save_config()
+
+    def toggle_line_numbers(self):
+        if self.show_line_numbers.get():
+            if not self.line_numbers:
+                text_area = self.get_current_text_area()
+                self.line_numbers = tk.Text(text_area, width=2, padx=5, takefocus=0, border=0, state="disabled")
+                self.line_numbers.pack(side="left", fill="y")
+                text_area.pack_configure(padx=(5, 0))
+            self.update_line_numbers()
+        else:
+            if self.line_numbers:
+                text_area = self.get_current_text_area()
+                self.line_numbers.pack_forget()
+                self.line_numbers = None
+                text_area.pack_configure(padx=(0, 0))
+    
+    def update_line_numbers(self):
+        if self.line_numbers:
+            text_area = self.get_current_text_area()
+            self.line_numbers.config(state="normal")
+            self.line_numbers.delete(1.0, tk.END)
+            line_count = text_area.index(tk.END).split(".")[0]
+            self.line_numbers.insert(tk.END, "\n".join(str(i) for i in range(1, int(line_count))))
+            self.line_numbers.config(state="disabled")
+            self.root.after(100, self.update_line_numbers)
     
     #FILE HELPERS
     def open_file(self):
