@@ -322,7 +322,8 @@ class NotepadAlternative:
         text_area = self.get_current_text_area()
         content = text_area.get(1.0, tk.END)
         words = len(content.split())
-        self.root.title(f"Notepad Alternative - Word Count: {words}")
+        letters = len(content.replace(" ", "").replace("\n", ""))
+        self.root.title(f"Notepad Alternative v{VERSION} - Word Count: {words} - Letter Count: {letters}")
 
     def load_config(self):
         try:
