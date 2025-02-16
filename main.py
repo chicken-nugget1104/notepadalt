@@ -33,14 +33,16 @@ class NotepadAlternative:
         self.current_theme = tk.StringVar(value=self.loaded_theme)
         self.themes = {
             "Light": {"bg": "white", "fg": "black", "insert": "black", "select": "lightblue"},
-            "Dark": {"bg": "#2E2E2E", "fg": "white", "insert": "white", "select": "#555555"},
-            "Solarized": {"bg": "#002B36", "fg": "#839496", "insert": "#839496", "select": "#073642"},
+            "Dark": {"bg": "#1E1E1E", "fg": "#D4D4D4", "insert": "#D4D4D4", "select": "#3C3C3C"},
+            "Solarized Dark": {"bg": "#002B36", "fg": "#839496", "insert": "#93A1A1", "select": "#073642"},
+            "Solarized Light": {"bg": "#FDF6E3", "fg": "#657B83", "insert": "#586E75", "select": "#EEE8D5"},
             "Cooler Dark": {"bg": "#282c34", "fg": "#abb2bf", "insert": "#abb2bf", "select": "#3e4451"},
             "DOS Classic": {"bg": "#000000", "fg": "#FFFFFF", "insert": "#FFFFFF", "select": "#808080"},
-            "Command Prompt": {"bg": "#0F0F0F", "fg": "#39FF14", "insert": "#39FF14", "select": "#FF00FF"},
+            "Command Prompt": {"bg": "#1B1B1B", "fg": "#39FF14", "insert": "#00FF00", "select": "#008000"},
             "Gruvbox Dark": {"bg": "#282828", "fg": "#ebdbb2", "insert": "#ebdbb2", "select": "#504945"},
             "Gruvbox Light": {"bg": "#fbf1c7", "fg": "#3c3836", "insert": "#3c3836", "select": "#d5c4a1"},
-            "Midnight": {"bg": "#121212", "fg": "#C0C0C0", "insert": "#C0C0C0", "select": "#333333"}
+            "Midnight": {"bg": "#121212", "fg": "#AFAFAF", "insert": "#C0C0C0", "select": "#292929"},
+            "Nord": {"bg": "#2E3440", "fg": "#D8DEE9", "insert": "#88C0D0", "select": "#4C566A"}
         }
         self.style = ttk.Style()
 
@@ -147,8 +149,6 @@ class NotepadAlternative:
         self.tabs.add(frame, text=tab_name)
         self.tab_frames.append(text_area)
         self.current_files[text_area] = None
-
-        self.setup_syntax_highlighting(text_area)
     
     def get_current_text_area(self):
         current_index = self.tabs.index(self.tabs.select())
@@ -192,14 +192,17 @@ class NotepadAlternative:
     def open_file(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("Haxe Files", "*.hx"), ("All Files", "*.*")])
         if file_path:
-            with open(file_path, "r", encoding="utf-8") as file:
-                text_area = self.get_current_text_area()
-                text_area.delete(1.0, tk.END)
-                text_area.insert(tk.END, file.read())
-            self.current_files[text_area] = file_path
-            self.update_tab_title(text_area, file_path)
-            self.update_status()
-            self.setup_syntax_highlighting(text_area)
+            try:
+                with open(file_path, "r", encoding="utf-8") as file:
+                    text_area = self.get_current_text_area()
+                    text_area.delete(1.0, tk.END)
+                    text_area.insert(tk.END, file.read())
+                self.current_files[text_area] = file_path
+                self.update_tab_title(text_area, file_path)
+                self.update_status()
+            except Exception as e:
+                logging.error(f"Error opening file: {e}")
+                messagebox.showerror("Error", "Failed to open the file.")
     
     def save_file(self):
         text_area = self.get_current_text_area()
