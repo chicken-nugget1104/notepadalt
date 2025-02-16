@@ -43,6 +43,7 @@ class NotepadAlternative:
             "Gruvbox Light": {"bg": "#fbf1c7", "fg": "#3c3836", "insert": "#3c3836", "select": "#d5c4a1"},
             "Midnight": {"bg": "#121212", "fg": "#AFAFAF", "insert": "#C0C0C0", "select": "#292929"},
             "Nord": {"bg": "#2E3440", "fg": "#D8DEE9", "insert": "#88C0D0", "select": "#4C566A"}
+            # "No CSS HTML": {"bg": "#FFFFFF", "fg": "#000000", "insert": "#0000EE", "select": "#CCCCCC"}
         }
         self.style = ttk.Style()
 
