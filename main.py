@@ -34,13 +34,13 @@ class NotepadAlternative:
         self.themes = {
             "Light": {"bg": "white", "fg": "black", "insert": "black", "select": "lightblue"},
             "Dark": {"bg": "#1E1E1E", "fg": "#D4D4D4", "insert": "#D4D4D4", "select": "#3C3C3C"},
-            "Solarized Dark": {"bg": "#002B36", "fg": "#839496", "insert": "#93A1A1", "select": "#073642"},
             "Solarized Light": {"bg": "#FDF6E3", "fg": "#657B83", "insert": "#586E75", "select": "#EEE8D5"},
+            "Solarized Dark": {"bg": "#002B36", "fg": "#839496", "insert": "#93A1A1", "select": "#073642"},
             "Cooler Dark": {"bg": "#282c34", "fg": "#abb2bf", "insert": "#abb2bf", "select": "#3e4451"},
             "DOS Classic": {"bg": "#000000", "fg": "#FFFFFF", "insert": "#FFFFFF", "select": "#808080"},
             "Command Prompt": {"bg": "#1B1B1B", "fg": "#39FF14", "insert": "#00FF00", "select": "#008000"},
-            "Gruvbox Dark": {"bg": "#282828", "fg": "#ebdbb2", "insert": "#ebdbb2", "select": "#504945"},
             "Gruvbox Light": {"bg": "#fbf1c7", "fg": "#3c3836", "insert": "#3c3836", "select": "#d5c4a1"},
+            "Gruvbox Dark": {"bg": "#282828", "fg": "#ebdbb2", "insert": "#ebdbb2", "select": "#504945"},
             "Midnight": {"bg": "#121212", "fg": "#AFAFAF", "insert": "#C0C0C0", "select": "#292929"},
             "Nord": {"bg": "#2E3440", "fg": "#D8DEE9", "insert": "#88C0D0", "select": "#4C566A"}
             # "No CSS HTML": {"bg": "#FFFFFF", "fg": "#000000", "insert": "#0000EE", "select": "#CCCCCC"}
