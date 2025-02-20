@@ -354,7 +354,8 @@ class NotepadAlternative:
         
         misspelled = [word for word in words if not re.match(r'^[A-Za-z]+$', word)]
         if misspelled:
-            messagebox.showinfo("Spell Check", f"Possible misspellings: {', '.join(misspelled)}")
+            misspelled_text = ', '.join(misspelled)
+            messagebox.showinfo("Spell Check", f"Possible misspellings: {misspelled_text}")
         else:
             messagebox.showinfo("Spell Check", "We found no spelling errors!")
 
