@@ -4,3 +4,4 @@ config.json
 /build
 main.spec
 dist/main.exe
+config.json
