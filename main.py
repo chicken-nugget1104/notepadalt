@@ -11,53 +11,58 @@ import os
 VERSION = "1.2.0-DEV"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger()
 
 class NotepadAlternative:
     def __init__(self, root):
-        self.root = root
-        self.root.title("Notepad Alternative")
-        self.root.geometry("800x600")
+        try:
+            self.root = root
+            self.root.title("Notepad Alternative")
+            self.root.geometry("800x600")
         
-        self.tabs = ttk.Notebook(root)
-        self.tabs.pack(expand=True, fill=tk.BOTH)
+            self.tabs = ttk.Notebook(root)
+            self.tabs.pack(expand=True, fill=tk.BOTH)
         
-        self.tab_frames = []
-        self.current_files = {}
-        self.last_search_term = None
+            self.tab_frames = []
+            self.current_files = {}
+            self.last_search_term = None
 
-	# Update Checker
-        self.check_for_updates()
+	    # Update Checker
+            self.check_for_updates()
         
-        # Theme shenanagins (took so long to make...)
-        self.loaded_theme = "Light"
-        self.current_theme = tk.StringVar(value=self.loaded_theme)
-        self.themes = {
-            "Light": {"bg": "white", "fg": "black", "insert": "black", "select": "lightblue"},
-            "Dark": {"bg": "#1E1E1E", "fg": "#D4D4D4", "insert": "#D4D4D4", "select": "#3C3C3C"},
-            "Solarized Light": {"bg": "#FDF6E3", "fg": "#657B83", "insert": "#586E75", "select": "#EEE8D5"},
-            "Solarized Dark": {"bg": "#002B36", "fg": "#839496", "insert": "#93A1A1", "select": "#073642"},
-            "Cooler Dark": {"bg": "#282c34", "fg": "#abb2bf", "insert": "#abb2bf", "select": "#3e4451"},
-            "DOS Classic": {"bg": "#000000", "fg": "#FFFFFF", "insert": "#FFFFFF", "select": "#808080"},
-            "Command Prompt": {"bg": "#1B1B1B", "fg": "#39FF14", "insert": "#00FF00", "select": "#008000"},
-            "Gruvbox Light": {"bg": "#fbf1c7", "fg": "#3c3836", "insert": "#3c3836", "select": "#d5c4a1"},
-            "Gruvbox Dark": {"bg": "#282828", "fg": "#ebdbb2", "insert": "#ebdbb2", "select": "#504945"},
-            "Midnight": {"bg": "#121212", "fg": "#AFAFAF", "insert": "#C0C0C0", "select": "#292929"},
-            "Nord": {"bg": "#2E3440", "fg": "#D8DEE9", "insert": "#88C0D0", "select": "#4C566A"}
-            # "No CSS HTML": {"bg": "#FFFFFF", "fg": "#000000", "insert": "#0000EE", "select": "#CCCCCC"}
-        }
-        self.style = ttk.Style()
+            # Theme shenanagins (took so long to make...)
+            self.loaded_theme = "Light"
+            self.current_theme = tk.StringVar(value=self.loaded_theme)
+            self.themes = {
+                "Light": {"bg": "white", "fg": "black", "insert": "black", "select": "lightblue"},
+                "Dark": {"bg": "#1E1E1E", "fg": "#D4D4D4", "insert": "#D4D4D4", "select": "#3C3C3C"},
+                "Solarized Light": {"bg": "#FDF6E3", "fg": "#657B83", "insert": "#586E75", "select": "#EEE8D5"},
+                "Solarized Dark": {"bg": "#002B36", "fg": "#839496", "insert": "#93A1A1", "select": "#073642"},
+                "Cooler Dark": {"bg": "#282c34", "fg": "#abb2bf", "insert": "#abb2bf", "select": "#3e4451"},
+                "DOS Classic": {"bg": "#000000", "fg": "#FFFFFF", "insert": "#FFFFFF", "select": "#808080"},
+                "Command Prompt": {"bg": "#1B1B1B", "fg": "#39FF14", "insert": "#00FF00", "select": "#008000"},
+                "Gruvbox Light": {"bg": "#fbf1c7", "fg": "#3c3836", "insert": "#3c3836", "select": "#d5c4a1"},
+                "Gruvbox Dark": {"bg": "#282828", "fg": "#ebdbb2", "insert": "#ebdbb2", "select": "#504945"},
+                "Midnight": {"bg": "#121212", "fg": "#AFAFAF", "insert": "#C0C0C0", "select": "#292929"},
+                "Nord": {"bg": "#2E3440", "fg": "#D8DEE9", "insert": "#88C0D0", "select": "#4C566A"}
+            }
+            self.style = ttk.Style()
 
-        # SETTINGS
-        self.word_wrap = tk.BooleanVar(value=True)
-        self.show_line_numbers = tk.BooleanVar(value=False)
-        self.line_numbers = None
+            # SETTINGS
+            self.word_wrap = tk.BooleanVar(value=True)
+            self.show_line_numbers = tk.BooleanVar(value=False)
+            self.line_numbers = None
 
-        self.create_menu()
-        self.load_config()
-        self.apply_theme()
-        self.new_tab()
+            self.create_menu()
+            self.load_config()
+            self.apply_theme()
+            self.new_tab()
         
-        self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
+            self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
+        except Exception as e:
+            logger.error(f"An error occurred while initializing the application: {e}")
+            logger.error("Traceback:", exc_info=True)
+            self.root.quit()
 
     def check_for_updates(self):
         try:
@@ -71,7 +76,7 @@ class NotepadAlternative:
                 if messagebox.askyesno("Update Available", "Oh! You're running an outdated version! Wanna update?"):
                     webbrowser.open(f"https://github.com/chicken-nugget1104/notepadalt/releases/tag/{latest_version}")
         except Exception as e:
-            logging.error(f"Error checking for updates: {e}")
+            logger.error(f"Error checking for updates: {e}")
     
     def create_menu(self):
         menu_bar = tk.Menu(self.root)
@@ -204,7 +209,7 @@ class NotepadAlternative:
                 self.update_tab_title(text_area, file_path)
                 self.update_status()
             except Exception as e:
-                logging.error(f"Error opening file: {e}")
+                logger.error(f"Error opening file: {e}")
                 messagebox.showerror("Error", "Failed to open the file.")
     
     def save_file(self):
@@ -377,7 +382,7 @@ class NotepadAlternative:
             with open("config.json", "w") as config_file:
                 json.dump({"word_wrap": word_wrap_value}, config_file, indent=4)
         except Exception as e:
-            logging.error(f"Error saving theme config: {e}")
+            logger.error(f"Error saving theme config: {e}")
 
     def apply_theme(self):
         theme_name = self.current_theme.get()
