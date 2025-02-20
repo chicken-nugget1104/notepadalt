@@ -8,7 +8,7 @@ import webbrowser
 import logging
 import os
 
-VERSION = "1.2.1-DEV"
+VERSION = "1.2.0"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
@@ -74,8 +74,15 @@ class NotepadAlternative:
                 return
             
             if VERSION != latest_version:
-                if messagebox.askyesno("Update Available", "Oh noes! You're running a (possibly) outdated version! Wanna update?"):
-                    webbrowser.open(f"https://github.com/chicken-nugget1104/notepadalt/releases/tag/{latest_version}")
+                release_url = f"https://github.com/chicken-nugget1104/notepadalt/releases/tag/{latest_version}"
+                release_check = requests.get(release_url)
+            
+                if release_check.status_code == 200:
+                    if messagebox.askyesno("Update Available", "Oh noes! You're running a (possibly) outdated version! Wanna update?"):
+                        webbrowser.open(release_url)
+                else:
+                    logger.warning(f"Release {latest_version} does not exist.")
+
         except Exception as e:
             logger.error(f"Error checking for updates: {e}")
     
