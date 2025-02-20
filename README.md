@@ -1,5 +1,6 @@
 # notepad alternative
 A alternative to notepad. Full name: Notepad Alternative (im lazy. i know.)
+This is FREE and OPEN SOURCE! If you had to PAY MONEY then you have been scammed! This project is also ONLY available on github!
 
 # SUPPORTED FILE TYPES
 We support:
