@@ -8,7 +8,7 @@ import webbrowser
 import logging
 import os
 
-VERSION = "1.2.0-DEV"
+VERSION = "1.2.0"
 
 logging.basicConfig(filename="naerrorlog.log", level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
