@@ -81,9 +81,11 @@ class NotepadAlternative:
                     if messagebox.askyesno("Update Available", "Oh noes! You're running a (possibly) outdated version! Wanna update?"):
                         webbrowser.open(release_url)
                 else:
+                    print(f"Release {latest_version} does not exist.")
                     logger.warning(f"Release {latest_version} does not exist.")
 
         except Exception as e:
+            print(f"Error checking for updates: {e}")
             logger.error(f"Error checking for updates: {e}")
     
     def create_menu(self):
