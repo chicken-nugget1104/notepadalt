@@ -152,6 +152,8 @@ class NotepadAlternative:
         self.current_files[text_area] = None
     
     def get_current_text_area(self):
+        if not self.tab_frames:
+            return None
         current_index = self.tabs.index(self.tabs.select())
         return self.tab_frames[current_index]
 
@@ -212,6 +214,7 @@ class NotepadAlternative:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(text_area.get(1.0, tk.END))
                 self.update_tab_title(text_area, file_path)
+                text_area.edit_modified(False)
         else:
             self.save_as_file()
     
@@ -221,6 +224,7 @@ class NotepadAlternative:
         if file_path:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(text_area.get(1.0, tk.END))
+                text_area.edit_modified(False)
             self.current_files[text_area] = file_path
             self.update_tab_title(text_area, file_path)
 
