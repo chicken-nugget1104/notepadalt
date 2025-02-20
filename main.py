@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, simpledialog, ttk
+from tkinter import filedialog, messagebox, simpledialog, font, ttk
 from tkinter.scrolledtext import ScrolledText
 import re
 import json
@@ -52,6 +52,7 @@ class NotepadAlternative:
             self.word_wrap = tk.BooleanVar(value=True)
             self.show_line_numbers = tk.BooleanVar(value=False)
             self.line_numbers = None
+            self.current_font = "Arial"
 
             self.create_menu()
             self.load_config()
@@ -111,8 +112,6 @@ class NotepadAlternative:
         view_menu.add_command(label="Reset Zoom", command=self.zoom_reset, accelerator="Ctrl+R")
         if VERSION.endswith("-DEV"):
             view_menu.add_command(label="CCZ (DEBUG ONLY)", command=self.whatisthecurrentzoom)
-
-        view_menu.add_checkbutton(label="Word Wrap", variable=self.word_wrap, command=self.toggle_word_wrap)
         menu_bar.add_cascade(label="View", menu=view_menu)
 
         settings_menu = tk.Menu(menu_bar, tearoff=0)
@@ -121,6 +120,8 @@ class NotepadAlternative:
             theme_menu.add_radiobutton(label=theme, variable=self.current_theme, command=self.apply_theme)
         
         settings_menu.add_cascade(label="Themes", menu=theme_menu)
+        settings_menu.add_checkbutton(label="Word Wrap", variable=self.word_wrap, command=self.toggle_word_wrap)
+        settings_menu.add_command(label="Change Font", command=self.change_font)
         #settings_menu.add_checkbutton(label="Show Line Numbers", onvalue=True, offvalue=False, variable=self.show_line_numbers, command=self.toggle_line_numbers)
         menu_bar.add_cascade(label="Settings", menu=settings_menu)
         
@@ -146,7 +147,7 @@ class NotepadAlternative:
     
     def new_tab(self):
         frame = tk.Frame(self.tabs)
-        text_area = ScrolledText(frame, wrap="word", undo=True, font=("Arial", 12))
+        text_area = ScrolledText(frame, wrap="word", undo=True, font=(self.current_font, 12))
         text_area.pack(expand=True, fill=tk.BOTH)
         
         text_area.bind("<KeyRelease>", self.update_status)
@@ -359,6 +360,29 @@ class NotepadAlternative:
         else:
             messagebox.showinfo("Spell Check", "We found no spelling errors!")
 
+    def change_font(self):
+        font_window = tk.Toplevel(self.root)
+        font_window.title("Choose Font")
+        
+        font_list = [f for f in font.families() if re.match(r'^[A-Za-z0-9]+$', f)]
+        font_var = tk.StringVar(value=self.current_font[0])
+        
+        font_listbox = tk.Listbox(font_window, listvariable=tk.StringVar(value=font_list), height=10)
+        font_listbox.pack(fill="both", expand=True)
+        
+        def set_font():
+            selected_font = font_listbox.get(tk.ACTIVE)
+            if selected_font:
+                self.current_font = selected_font
+                for text_area in self.tab_frames:
+                    text_area.config(font=(self.current_font, 12))
+                print(f"{self.current_font}")
+                self.save_config()
+                print("Saved config")
+                font_window.destroy()
+        
+        tk.Button(font_window, text="Apply", command=set_font).pack()
+
     def show_about(self):
         messagebox.showinfo("About", f"Notepad Alternative v{VERSION}\nCreated by silly goober\n2025-2026")
 
@@ -374,14 +398,16 @@ class NotepadAlternative:
             with open("config.json", "r") as config_file:
                 config_data = json.load(config_file)
                 self.word_wrap.set(config_data.get("word_wrap", True))
+                self.current_font = config_data.get("font", "Arial")
         except (FileNotFoundError, json.JSONDecodeError):
             self.word_wrap.set(True)
+            self.current_font = "Arial"
 
     def save_config(self):
         try:
             word_wrap_value = self.word_wrap.get()
             with open("config.json", "w") as config_file:
-                json.dump({"word_wrap": word_wrap_value}, config_file, indent=4)
+                json.dump({"word_wrap": word_wrap_value, "font": self.current_font}, config_file, indent=4)
         except Exception as e:
             logger.error(f"Error saving theme config: {e}")
 
@@ -416,14 +442,14 @@ class NotepadAlternative:
     def zoom_in(self):
         text_area = self.get_current_text_area()
         current_size = int(text_area.cget("font").split()[1])
-        if current_size != 30:
-            text_area.config(font=("Arial", current_size + 2))
+        if current_size != 28:
+            text_area.config(font=(self.current_font, current_size + 2))
     
     def zoom_out(self):
         text_area = self.get_current_text_area()
         current_size = int(text_area.cget("font").split()[1])
-        if current_size != 6:
-            text_area.config(font=("Arial", max(8, current_size - 2)))
+        if current_size != 8:
+            text_area.config(font=(self.current_font, max(8, current_size - 2)))
 
     def whatisthecurrentzoom(self):
         text_area = self.get_current_text_area()
@@ -433,7 +459,7 @@ class NotepadAlternative:
     def zoom_reset(self):
         text_area = self.get_current_text_area()
         current_size = int(text_area.cget("font").split()[1])
-        text_area.config(font=("Arial", 12))
+        text_area.config(font=(self.current_font, 12))
     
     def on_exit(self):
         for text_area in self.tab_frames:
