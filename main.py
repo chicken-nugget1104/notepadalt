@@ -73,7 +73,7 @@ class NotepadAlternative:
                 return
             
             if VERSION != latest_version:
-                if messagebox.askyesno("Update Available", "Oh! You're running an outdated version! Wanna update?"):
+                if messagebox.askyesno("Update Available", "Oh noes! You're running a (possibly) outdated version! Wanna update?"):
                     webbrowser.open(f"https://github.com/chicken-nugget1104/notepadalt/releases/tag/{latest_version}")
         except Exception as e:
             logger.error(f"Error checking for updates: {e}")
@@ -198,7 +198,7 @@ class NotepadAlternative:
     
     #FILE HELPERS
     def open_file(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("Haxe Files", "*.hx"), ("All Files", "*.*")])
+        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("Haxe Files", "*.hx"), ("Python Files", "*.py"), ("All Files", "*.*")])
         if file_path:
             try:
                 with open(file_path, "r", encoding="utf-8") as file:
@@ -225,7 +225,7 @@ class NotepadAlternative:
     
     def save_as_file(self):
         text_area = self.get_current_text_area()
-        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"),  ("Javascript Files", "*.js"), ("Haxe Files", "*.hx"), ("All Files", "*.*")])
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("Javascript Files", "*.js"), ("Haxe Files", "*.hx"), ("Python Files", "*.py"), ("All Files", "*.*")])
         if file_path:
             with open(file_path, "w", encoding="utf-8") as file:
                 file.write(text_area.get(1.0, tk.END))
