@@ -46,7 +46,7 @@ class NotepadAlternative:
             }
             self.style = ttk.Style()
 
-            # SETTINGS
+            # Settings
             self.word_wrap = tk.BooleanVar(value=True)
             self.show_line_numbers = tk.BooleanVar(value=False)
             self.line_numbers = None
@@ -183,6 +183,7 @@ class NotepadAlternative:
         for text_area in self.tab_frames:
             text_area.config(wrap="word" if self.word_wrap.get() else "none")
         self.save_config()
+        print("Saved config")
 
     def toggle_line_numbers(self):
         if self.show_line_numbers.get():
@@ -479,6 +480,7 @@ class NotepadAlternative:
                 if messagebox.askyesno("Save Changes", "You have some unsaved changes. Save before exiting?"):
                     self.save_file()
         self.save_config()
+        print("Saved config")
         self.root.destroy()
 
 if __name__ == "__main__":
