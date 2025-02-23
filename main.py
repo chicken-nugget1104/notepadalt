@@ -26,9 +26,6 @@ class NotepadAlternative:
             self.tab_frames = []
             self.current_files = {}
             self.last_search_term = None
-
-	    # Update Checker
-            self.check_for_updates()
         
             # Theme shenanagins (took so long to make...)
             self.loaded_theme = "Light"
@@ -44,6 +41,7 @@ class NotepadAlternative:
                 "Gruvbox Light": {"bg": "#fbf1c7", "fg": "#3c3836", "insert": "#3c3836", "select": "#d5c4a1"},
                 "Gruvbox Dark": {"bg": "#282828", "fg": "#ebdbb2", "insert": "#ebdbb2", "select": "#504945"},
                 "Midnight": {"bg": "#121212", "fg": "#AFAFAF", "insert": "#C0C0C0", "select": "#292929"},
+                "Solar Flare": {"bg": "#FF4F00", "fg": "#FFF0F0", "insert": "#FFD700", "select": "#7C2B00"},
                 "Nord": {"bg": "#2E3440", "fg": "#D8DEE9", "insert": "#88C0D0", "select": "#4C566A"}
             }
             self.style = ttk.Style()
@@ -58,6 +56,9 @@ class NotepadAlternative:
             self.load_config()
             self.apply_theme()
             self.new_tab()
+
+	    # Update Checker
+            self.check_for_updates()
         
             self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
         except Exception as e:
@@ -69,6 +70,8 @@ class NotepadAlternative:
         try:
             response = requests.get("https://raw.githubusercontent.com/chicken-nugget1104/notepadalt/refs/heads/main/versionnumber.txt")
             latest_version = response.text.strip()
+
+            print(f"UPDATE CHECKER LOG: Latest version is {latest_version}, current version is {VERSION}.")
             
             if VERSION.endswith("-DEV"):
                 return

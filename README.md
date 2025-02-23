@@ -27,6 +27,7 @@ We have:
 * Gruvbox Light
 * Gruvbox Dark
 * Midnight
+* Solar Flare
 * Nord
 
 THERE WILL BE MORE IN THE FUTURE!
