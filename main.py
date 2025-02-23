@@ -463,15 +463,15 @@ class NotepadAlternative:
         if current_size != 8:
             text_area.config(font=(self.current_font, max(8, current_size - 2)))
 
-    def whatisthecurrentzoom(self):
-        text_area = self.get_current_text_area()
-        current_size = int(text_area.cget("font").split()[1])
-        messagebox.showinfo("Zoom", current_size)
-
     def zoom_reset(self):
         text_area = self.get_current_text_area()
         current_size = int(text_area.cget("font").split()[1])
         text_area.config(font=(self.current_font, 12))
+
+    def whatisthecurrentzoom(self):
+        text_area = self.get_current_text_area()
+        current_size = int(text_area.cget("font").split()[1])
+        messagebox.showinfo("Zoom", current_size)
     
     def on_exit(self):
         for text_area in self.tab_frames:
