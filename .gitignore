@@ -5,3 +5,4 @@ config.json
 main.spec
 dist/main.exe
 config.json
+/memory_leak_detector
